@@ -6,8 +6,8 @@
 import { z } from 'zod';
 
 const envSchema = z.object({
-  DATABASE_URL: z.string().url(),
-  NODE_ENV: z.enum(['development', 'test', 'production']),
+  DATABASE_URL: z.string().url().optional(),
+  NODE_ENV: z.enum(['development', 'test', 'production']).optional(),
 });
 
 const _env = envSchema.safeParse(process.env);
