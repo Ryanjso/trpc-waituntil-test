@@ -8,6 +8,8 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { prisma } from '~/server/prisma';
 
+import { waitUntil } from '@vercel/functions';
+
 /**
  * Default selector for Post.
  * It's important to always explicitly say which fields you want to return in order to not leak extra information
@@ -99,6 +101,19 @@ export const postRouter = router({
         data: input,
         select: defaultPostSelect,
       });
+
+      waitUntil(
+        (async () => {
+          // wait 1 second
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          // update post with new title
+          await prisma.post.update({
+            where: { id: post.id },
+            data: { title: 'New Title' },
+          });
+        })(),
+      );
+
       return post;
     }),
 });
